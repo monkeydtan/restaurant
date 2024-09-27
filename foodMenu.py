@@ -44,7 +44,7 @@ class Customer:
             if menu_item.reduce_stock(quantity):
                 self.total_spent += total_food_cost # ยอดรวม += รายการอาหารที่สั่งทั้งหมด
                 self.budget_pay -= total_food_cost # เงินคงเหลือ...บาท -= ยอดที่สั่ง
-                self.order_items.append(f"{menu_item.menu} จำนวน {quantity} จาน ราคา {total_food_cost} บาท")  # เพิ่มเมนูที่สั่งเข้าไปในรายการ
+                self.order_items.append(f"{menu_item.menu} จำนวน {quantity} จาน จานละ {menu_item.price} บาท")  # เพิ่มเมนูที่สั่งเข้าไปในรายการ
             else:
                 return ("ไม่สามารถสั่งได้")
 
