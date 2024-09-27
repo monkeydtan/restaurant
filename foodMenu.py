@@ -18,9 +18,9 @@ class MenuItem():
     def reduce_stock(self,quantity):
         if quantity < self.in_stock:
             self.in_stock -= quantity
-            return f"สั่งเมนู {self.menu} จำนวน {quantity} จาน"
+            return True
         else:
-            return f"ของในสต็อกไม่เพียงพอต่อการเสิร์ฟ"
+            return False
         
     def __str__(self):
         return self.show_info()
@@ -31,25 +31,32 @@ class Customer:
         self.name = name
         self.budget = budget # งบตอนแรก
         self.budget_pay = budget # งบที่เหลือ
+        self.total_spent = 0 # ยอดรวมการสั่ง ... บาท
+        self.order_items = [] # รายการอาหารที่สั่ง
     
     # การสั่งอาหาร    
     def order_food(self,menu_item,quantity):
         total_food_cost = menu_item.price * quantity # ยอดรวม = ราคา * จำนวนจาน
+        
         if total_food_cost > self.budget:
-            print (f"ไม่สามารถสั่งได้ เนื่องจากรายการที่สั่งเกินราคา")
+            return (f"ไม่สามารถสั่งได้ เนื่องจากรายการที่สั่งเกินราคา")
         else:
-            self.budget_pay = self.budget - total_food_cost # งบหลังคำนวณ = งบตอนแรก - ยอดที่สั่ง
             if menu_item.reduce_stock(quantity):
-                print (f"{self.name} สั่ง {menu_item.menu} จำนวน {quantity} จาน\n"
-                        f"ยอดรวม {total_food_cost} บาท\n"
-                        f"จ่ายมา {self.budget} บาท เงินคงเหลือ {self.budget_pay} บาท"
-                    )
+                self.total_spent += total_food_cost # ยอดรวม += รายการอาหารที่สั่งทั้งหมด
+                self.budget_pay -= total_food_cost # เงินคงเหลือ...บาท -= ยอดที่สั่ง
+                self.order_items.append(f"{menu_item.menu} จำนวน {quantity} จาน ราคา {total_food_cost} บาท")  # เพิ่มเมนูที่สั่งเข้าไปในรายการ
             else:
-                print ("ไม่สามารถสั่งได้")
+                return ("ไม่สามารถสั่งได้")
 
     def __str__(self):
-        return f"ลูกค้า: {self.name} | เงินคงเหลือ: {self.budget_pay} บาท"
-
+        order_details = "\n".join(self.order_items)
+        return (f"----------------------------------\n"
+            f"รายการของ {self.name}\n"
+            f"{order_details}\n"
+            f"ยอดรวม : {self.total_spent} บาท\n"
+            f"จ่ายมา {self.budget} บาท เงินคงเหลือ {self.budget_pay} บาท\n"
+            f"----------------------------------\n"
+        )
 
 ########## สร้าง object เมนูอาหาร ##########        
 menu1 = MenuItem("ข้าวผัด",40,20)
